@@ -74,9 +74,6 @@ router.post('/', (req, res) => {
 
   const existingFilm = FILMS.some(
     (film) => {
-      console.log(film.title.toLowerCase()) 
-      console.log(newFilm.title.toLowerCase()) 
-
       return film.title.toLowerCase() == newFilm.title.toLowerCase()  }
   );
 
