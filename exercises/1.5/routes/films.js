@@ -79,9 +79,6 @@ router.post('/', (req, res) => {
       return film.title.toLowerCase() == newFilm.title.toLowerCase()  }
   );
 
-  //FIXME: existingFilm est tjr null et ne lance jamais le code 409⚠️
-  console.log(`⚠️⚠️⚠️ ${newFilm.title}`);
-  console.log(`💀💀💀 ${existingFilm}`);
   if (existingFilm) return res.sendStatus(409); // error code '409 Conflict'
 
 
