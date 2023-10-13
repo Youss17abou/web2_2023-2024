@@ -58,19 +58,32 @@ router.post('/', (req, res) => {
 
   if (!title || !duration || !budget || !link)
     return res.sendStatus(400); // error code '400 Bad request'
-  
-//TODO : FAIRE FONCTIONNER LA MéTHODE [ERROR 400]
+
   const lastItemIndex = FILMS?.length !== 0 ? FILMS.length - 1 : undefined;
   const lastId = lastItemIndex !== undefined ? FILMS[lastItemIndex]?.id : 0;
   const nextId = lastId + 1;
 
   const newFilm = {
     id: nextId,
-    title,
-    duration,
-    budget,
-    link,
+    title: title,
+    duration: duration,
+    budget: budget,
+    link: link,
   };
+
+  const existingFilm = FILMS.some(
+    (film) => {
+      console.log(film.title.toLowerCase()) 
+      console.log(newFilm.title.toLowerCase()) 
+
+      return film.title.toLowerCase() == newFilm.title.toLowerCase()  }
+  );
+
+  //FIXME: existingFilm est tjr null et ne lance jamais le code 409⚠️
+  console.log(`⚠️⚠️⚠️ ${newFilm.title}`);
+  console.log(`💀💀💀 ${existingFilm}`);
+  if (existingFilm) return res.sendStatus(409); // error code '409 Conflict'
+
 
   FILMS.push(newFilm);
   return res.json(newFilm);
