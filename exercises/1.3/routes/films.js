@@ -59,6 +59,7 @@ router.post('/', (req, res) => {
   if (!title || !duration || !budget || !link)
     return res.sendStatus(400); // error code '400 Bad request'
   
+//TODO : FAIRE FONCTIONNER LA MéTHODE [ERROR 400]
   const lastItemIndex = FILMS?.length !== 0 ? FILMS.length - 1 : undefined;
   const lastId = lastItemIndex !== undefined ? FILMS[lastItemIndex]?.id : 0;
   const nextId = lastId + 1;
