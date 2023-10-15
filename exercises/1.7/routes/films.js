@@ -1,5 +1,8 @@
 var express = require('express');
+const { serialize, parse } = require('../utils/json');
 var router = express.Router();
+
+const jsonDbPath = __dirname + '/../data/films.json';
 
 const FILMS = [
   {
@@ -25,32 +28,38 @@ const FILMS = [
   }
 ];
 
-// Read all the film from the FILMS
+// Read all the film from the films
 router.get('/', (req, res, next) => {
   console.log('GET /films');
+
+  const films = parse(jsonDbPath, FILMS);
   const minimumDuration = req?.query?.['minimum-duration']
     ? Number(req.query['minimum-duration'])
     : undefined;
   if (minimumDuration === undefined) {
-    return res.json(FILMS);
+    return res.json(films);
   }
   if (typeof minimumDuration !== 'number' || minimumDuration <= 0)
     return res.json('Wrong minimum duration');
-  let result = [...FILMS].filter(film => film.duration >= minimumDuration);
+  let result = [...films].filter(film => film.duration >= minimumDuration);
   return res.json(result);
 });
 
 router.get('/:id', (req, res) => {
   console.log(`GET /films/${req.params.id}`);
-  const indexOfFilmFound = FILMS.findIndex((film) => film.id == req.params.id);
+  const films = parse(jsonDbPath, FILMS);
+
+  const indexOfFilmFound = films.findIndex((film) => film.id == req.params.id);
 
   if (indexOfFilmFound < 0) return res.sendStatus(404);
 
-  res.json(FILMS[indexOfFilmFound]);
+  res.json(films[indexOfFilmFound]);
 });
 
 router.post('/', (req, res) => {
   console.log('POST /pizzas');
+  const films = parse(jsonDbPath, FILMS);
+
   const title = req?.body?.title?.length !== 0 ? req.body.title : undefined;
   const duration = req?.body?.duration?.length !== 0 ? req.body.duration : undefined;
   const budget = req?.body?.budget?.length !== 0 ? req.body.budget : undefined;
@@ -59,8 +68,8 @@ router.post('/', (req, res) => {
   if (!title || !duration || !budget || !link)
     return res.sendStatus(400); // error code '400 Bad request'
 
-  const lastItemIndex = FILMS?.length !== 0 ? FILMS.length - 1 : undefined;
-  const lastId = lastItemIndex !== undefined ? FILMS[lastItemIndex]?.id : 0;
+  const lastItemIndex = films?.length !== 0 ? films.length - 1 : undefined;
+  const lastId = lastItemIndex !== undefined ? films[lastItemIndex]?.id : 0;
   const nextId = lastId + 1;
 
   const newFilm = {
@@ -71,32 +80,37 @@ router.post('/', (req, res) => {
     link,
   };
 
-  const existingFilm = FILMS.some(
+  const existingFilm = films.some(
     (film) => {
-      return film.title.toLowerCase() == newFilm.title.toLowerCase()
+      return film.title.toLowerCase() == newFilm.title.toLowerCase();
     }
   );
 
   if (existingFilm) return res.sendStatus(409); // error code '409 Conflict'
 
 
-  FILMS.push(newFilm);
+  films.push(newFilm);
+  serialize(jsonDbPath,films);
   return res.json(newFilm);
 });
 
 router.delete('/:id', (req, res) => {
   console.log(`DELETE /films/${req.params.id}`);
-  const foundIndex = FILMS.findIndex(film => film.id == req.params.id);
+  const films = parse(jsonDbPath, FILMS);
+
+  const foundIndex = films.findIndex(film => film.id == req.params.id);
   if (foundIndex < 0) return res.sendStatus(404);
 
-  const itemsRemovedFromFilms = FILMS.splice(foundIndex, 1);
+  const itemsRemovedFromFilms = films.splice(foundIndex, 1);
   const itemRemoved = itemsRemovedFromFilms[0];
 
+  serialize(jsonDbPath,films);
   res.json(itemRemoved);
 });
 
 router.patch('/:id', (req, res) => {
   console.log(`PATCH /films/${req.params.id}`);
+  const films = parse(jsonDbPath, FILMS);
 
   console.log('POST /pizzas');
   const title = req?.body?.title?.length !== 0 ? req.body.title : undefined;
@@ -107,16 +121,18 @@ router.patch('/:id', (req, res) => {
   if (!title || !duration || !budget || !link)
     return res.sendStatus(400); // error code '400 Bad request'
 
-  const foundIndex = FILMS.findIndex(film => film.id == req.params.id);
+  const foundIndex = films.findIndex(film => film.id == req.params.id);
   if (foundIndex < 0) return res.sendStatus(404);
 
-  const updatedFilm = { ...FILMS[foundIndex], ...req.body };
-  FILMS[foundIndex] = updatedFilm;
+  const updatedFilm = { ...films[foundIndex], ...req.body };
+  films[foundIndex] = updatedFilm;
+  serialize(jsonDbPath,films);
   res.json(updatedFilm);
 });
 
 router.put('/:id', (req, res) => {
   console.log(`PUT /films/${req.params.id}`);
+  const films = parse(jsonDbPath, FILMS);
 
   const title = req?.body?.title?.length !== 0 ? req.body.title : undefined;
   const duration = req?.body?.duration?.length !== 0 ? req.body.duration : undefined;
@@ -124,19 +140,21 @@ router.put('/:id', (req, res) => {
   const link = req?.body?.link?.length !== 0 ? req.body.link : undefined;
   if (!title || !duration || !budget || !link)
     return res.sendStatus(400); // error code '400 Bad request'
-  
+
   const id = req.params.id;
-  const indexOfFilmFound = FILMS.findIndex((film) => film.id == id);
+  const indexOfFilmFound = films.findIndex((film) => film.id == id);
 
   if (indexOfFilmFound < 0) {
     const newFilm = { id, title, link, duration, budget };
-    FILMS.push(newFilm);
+    films.push(newFilm);
+    serialize(jsonDbPath,films);
     return res.json(newFilm);
   }
 
-  const updatedFilm = { ...FILMS[indexOfFilmFound], ...req.body };
+  const updatedFilm = { ...films[indexOfFilmFound], ...req.body };
 
-  FILMS[indexOfFilmFound] = updatedFilm;
+  films[indexOfFilmFound] = updatedFilm;
+  serialize(jsonDbPath,films);
   return res.json(updatedFilm);
 });
 
