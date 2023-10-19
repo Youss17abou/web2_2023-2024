@@ -37,7 +37,7 @@ PUT {{baseUrl}}/films/666
 Content-Type: application/json
 
 {
-    "title":"Attack of the beast",
+    "title" :"Attack of the beast",
     "duration": 666,
     "budget": 666,
     "link":"https://666"
