@@ -1,0 +1,7 @@
+/* Ajoutez la classe 'bottom-image' pour positionner l'image en bas */
+.bottom-image {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
