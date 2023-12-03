@@ -33,7 +33,7 @@ function onHistoryChange() {
 function onFrontendLoad() {
   window.addEventListener('load', () => {
     const uri = window.location.pathname;
-    const componentToRender = routes[uri];
+    const componentToRender = routes[uri]; 
     if (!componentToRender) throw Error(`The ${uri} ressource does not exist.`);
 
     componentToRender();
