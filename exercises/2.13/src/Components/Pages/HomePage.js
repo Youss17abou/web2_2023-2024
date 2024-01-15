@@ -2,7 +2,7 @@ import { renderHeaderTitle } from '../../utils/render';
 
 const EXPECTED_RECT_COUNT = 101;
 const DEFAULT_SHAPE_SIDE = 20;
-const DEFAULT_COLOR = 'blue'; // 'rgba(255,0,0,0.5)';
+// const DEFAULT_COLOR = 'blue'; // 'rgba(255,0,0,0.5)';
 
 /**
  * WARNING : THE STROBOSCOPIC EFFECT OF THIS DEMO COULD LEAD TO EPILEPSY !!!
@@ -46,34 +46,17 @@ const HomePage = () => {
   function drawOneFrame() {
     clearFrame();
 
-    drawRectanglesAtRandomLocations();
-    // drawAlwaysFullRectanglesAtRandomLocations();
+    // drawRectanglesAtRandomLocations();
+    drawAlwaysFullRectanglesAtRandomLocations();
 
-    requestAnimationFrame(drawOneFrame);
-
-    // requestAnimationFrame(() => setTimeout(drawOneFrame, 1000));
+    requestAnimationFrame(() => setTimeout(drawOneFrame, 100));
   }
 
   function clearFrame() {
     canvasContext.clearRect(0, 0, mainWidth, mainHeight);
   }
 
-  function drawRectanglesAtRandomLocations() {
-    canvasContext.fillStyle = DEFAULT_COLOR;
-
-    for (let i = 0; i < EXPECTED_RECT_COUNT; i += 1) {
-      canvasContext.fillRect(
-        Math.random() * mainWidth,
-        Math.random() * mainHeight,
-        DEFAULT_SHAPE_SIDE,
-        DEFAULT_SHAPE_SIDE,
-      );
-    }
-  }
-
-  /* function drawAlwaysFullRectanglesAtRandomLocations() {
-    canvasContext.fillStyle = DEFAULT_COLOR;
-
+  function drawAlwaysFullRectanglesAtRandomLocations() {
     for (let i = 0; i < EXPECTED_RECT_COUNT; i += 1) {
       const randomX = Math.random() * mainWidth;
       let expectedX = randomX;
@@ -87,9 +70,24 @@ const HomePage = () => {
         expectedY = mainHeight - DEFAULT_SHAPE_SIDE;
       }
 
-      canvasContext.fillRect(expectedX, expectedY, DEFAULT_SHAPE_SIDE, DEFAULT_SHAPE_SIDE);
+      const shapeSide = Math.random() * DEFAULT_SHAPE_SIDE * 2;
+
+      const randomColor = getRandomColor();
+      canvasContext.fillStyle = randomColor;
+
+      canvasContext.fillRect(expectedX, expectedY, shapeSide, shapeSide);
     }
-  } */
+  }
+
+  function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 };
 
 export default HomePage;
