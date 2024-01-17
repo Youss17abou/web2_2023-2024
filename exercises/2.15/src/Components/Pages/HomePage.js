@@ -18,6 +18,7 @@ fetch('https://v2.jokeapi.dev/joke/Any?type=single')
     jokeCategory.textContent = `Category: ${data.category}`;
     main.appendChild(jokeCategory);
   })
+  // eslint-disable-next-line no-console
   .catch((error) => console.error('Error fetching joke:', error));
 
 };
